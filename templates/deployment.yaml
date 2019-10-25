@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: datadog
+    chart: datadog-1.30.7
+    heritage: Tiller
+    release: datadog
+  name: datadog
+  namespace: monitoring
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: datadog
+  template:
+    metadata:
+      annotations:
+        checksum/autoconf-config: asdfasdfasdf
+      labels:
+        app: datadog
+      name: datadog
+    spec:
+      containers:
+      - env:
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api-key
+              name: datadog
+        image: datadog/agent:6.10.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: 5555
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: datadog
+        ports:
+        - containerPort: 8125
+          hostPort: 8125
+          name: dogstatsdport
+          protocol: UDP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: runtimesocket
+          readOnly: true
+        - mountPath: /host/proc
+          name: procdir
+          readOnly: true
+        - mountPath: /host/sys/fs/cgroup
+          name: cgroups
+          readOnly: true
+        - mountPath: /var/run/s6
+          name: s6-run
+        - mountPath: /opt/datadog-agent/run
+          name: pointerdir
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /var/run/docker.sock
+          type: ""
+        name: runtimesocket
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
