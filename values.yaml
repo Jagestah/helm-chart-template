@@ -1,8 +1,7 @@
-name: datadog
+name: template-test
 namespace: monitoring
 
 deployment:
-  enabled: true
   image:
     name: datadog/agent
     tag: latest
@@ -12,17 +11,13 @@ deployment:
     checksum/deploy_annotate: asdfasdfasdf
   podAnnotations:
     checksum/pod_annotate: asdfasdfasdf
-  labels:
-    app: datadog
+  labels: {}
   livenessProbe:
-    failureThreshold: 6
     httpGet:
       path: /health
       port: 5555
       scheme: HTTP
-    initialDelaySeconds: 15
     periodSeconds: 15
-    successThreshold: 1
     timeoutSeconds: 5
   readinessProbe:
     failureThreshold: 6
@@ -39,6 +34,20 @@ deployment:
     hostPort: 8125
     name: dogstatsdport
     protocol: UDP
+  volumes:
+  - name: volume
+    hostPath:
+      path: /var/run/docker.sock
+      type: ""
+  volumeMounts:
+  - mountPath: /var/run/docker.sock
+    name: volume
+    readOnly: true
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
   resources:
     requests:
       cpu: 750m
@@ -46,32 +55,19 @@ deployment:
     limits:
       cpu: 3G
       memory: 1G
-  volumeMounts:
-  - mountPath: /var/run/docker.sock
-    name: runtimesocket
-    readOnly: true
-  volumes:
-  - name: runtimesocket
-    hostPath:
-    path: /var/run/docker.sock
-    type: ""
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
 
 service:
   annotations:
     this_is: an_annotation
   type: ClusterIP
   ports:
-    name: dogstatsdport
+  - name: dogstatsdport
     port: 8125
     protocol: TCP
     targetPort: 8125
 
 secrets:
-  the_password_is: nipples
+  the_password_is: shenanigans
 
 configmaps:
 - name: number-1-configmap-na

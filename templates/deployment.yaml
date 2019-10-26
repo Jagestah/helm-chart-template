@@ -61,9 +61,9 @@ spec:
 {{ toYaml .Values.deployment.volumeMounts | indent 8 }}
         {{- end }}
         {{- if .Values.deployment.volumes }}
-        volumes:
-{{ toYaml .Values.deployment.volumes | indent 8}}
-        {{- end }}
+      volumes:
+{{ toYaml .Values.deployment.volumes | indent 6}}
+      {{- end }}
   {{- if .Values.deployment.updateStrategy }}
   updateStrategy:
 {{ toYaml .Values.deployment.updateStrategy | indent 4}}
