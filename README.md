@@ -1,7 +1,7 @@
 # helm-chart-template
 A templatized, one-size-fits-all Helm chart.
 
-### Explanation of Configs
+### Explanation of Configs in the `values.yaml` file.
 ##### Global
 - `name:` Primarily used to name the pods and label resources.
 - `namespace:` Namespace to deploy resources to.
