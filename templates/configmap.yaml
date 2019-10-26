@@ -1,0 +1,17 @@
+{{- if .Values.configmaps }}
+{{- range .Values.configmaps }}
+---
+apiVersion: v1
+data:
+{{ toYaml .data | indent 2 }}
+kind: ConfigMap
+metadata:
+  labels:
+    app: {{ $.Chart.Name }}
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
+    heritage: Tiller
+    release: {{ $.Chart.Name }}
+  name: {{ .name }}
+  namespace: {{ $.Values.namespace }}
+{{- end }}
+{{ end }}
