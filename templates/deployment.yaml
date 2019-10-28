@@ -1,5 +1,7 @@
 
 {{- range .Values.deployment.deployments }}
+{{- $name := .name }}
+{{- $hpa := .hpa }}
 apiVersion: extensions/v1beta1
 kind: {{ $.Values.deployment.kind }}
 metadata:
@@ -12,7 +14,7 @@ metadata:
   annotations:
 {{ toYaml $.Values.deployment.deployAnnotations | indent 4}}
   {{- end }}
-  name: {{ $.Values.name }}
+  name: {{ $name }}
   namespace: {{ $.Values.namespace }}
 spec:
   template:
@@ -30,7 +32,7 @@ spec:
     spec:
       restartPolicy: {{ $.Values.deployment.restartPolicy }}
       containers:
-      - name: {{ $.Values.name }}
+      - name: {{ $name }}
         {{- if .args }}
         args:
 {{ toYaml .args | indent 10 }}

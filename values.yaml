@@ -1,9 +1,16 @@
-name: template-test
+
+name: template
 namespace: monitoring
 
 deployment:
   deployments:
     deploymentOne:
+      name: template-test
+      hpa:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 10
+        targetCpuUtilization: 125
       args:
       - streamer -stream_type=twitterv1
       command:
