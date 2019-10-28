@@ -1,3 +1,4 @@
+{{- if .Values.service }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,13 +6,10 @@ metadata:
   annotations:
     {{ toYaml .Values.service.annotations }}
   {{- end }}
-  labels:
-    app: {{ .Chart.Name }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    heritage: Tiller
-    release: {{ .Chart.Name }}
   name: {{ .Values.name }}-service
   namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
 spec:
   {{- if .Values.service.ports }}
   ports:
@@ -19,6 +17,6 @@ spec:
   {{- end }}
   selector:
     app: {{ .Chart.Name }}
-    release: {{ .Chart.Name }}
   sessionAffinity: None
   type: {{ .Values.service.type }}
+{{- end }}

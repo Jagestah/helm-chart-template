@@ -2,6 +2,20 @@ name: template-test
 namespace: monitoring
 
 deployment:
+  deployments:
+    deploymentOne:
+      args:
+      - streamer -stream_type=twitterv1
+      command:
+      - /bin/bash
+      - -c
+      resources:
+        requests:
+          cpu: 750m
+          memory: 200m
+        limits:
+          cpu: 3G
+          memory: 1G
   image:
     name: datadog/agent
     tag: latest
@@ -48,13 +62,6 @@ deployment:
     rollingUpdate:
       maxUnavailable: 25%
       maxSurge: 25%
-  resources:
-    requests:
-      cpu: 750m
-      memory: 200m
-    limits:
-      cpu: 3G
-      memory: 1G
 
 service:
   annotations:

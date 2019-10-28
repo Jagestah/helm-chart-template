@@ -1,36 +1,45 @@
-{{ if .Values.deployment.enabled }}
+
+{{- range $deploy_name := $.Values.deployment.deployments }}
 apiVersion: extensions/v1beta1
-kind: {{ .Values.deployment.kind }}
+kind: {{ $.Values.deployment.kind }}
 metadata:
   labels:
-    app: {{ .Chart.Name }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ $.Chart.Name }}
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
     heritage: Tiller
-    release: {{ .Chart.Name }}
-  {{- if .Values.deployment.deployAnnotations }}
+    release: {{ $.Chart.Name }}
+  {{- if $.Values.deployment.deployAnnotations }}
   annotations:
-{{ toYaml .Values.deployment.deployAnnotations | indent 4}}
+{{ toYaml $.Values.deployment.deployAnnotations | indent 4}}
   {{- end }}
-  name: {{ .Values.name }}
-  namespace: {{ .Values.namespace }}
+  name: {{ $.Values.name }}
+  namespace: {{ $.Values.namespace }}
 spec:
   template:
     metadata:
-      {{- if .Values.deployment.podAnnotations }}
+      {{- if $.Values.deployment.podAnnotations }}
       annotations:
-{{ toYaml .Values.deployment.podAnnotations | indent 8}}
+{{ toYaml $.Values.deployment.podAnnotations | indent 8}}
       {{- end }}
-      {{- if .Values.deployment.labels }}
+      {{- if $.Values.deployment.labels }}
       labels:
-{{ toYaml .Values.deployment.labels | indent 8 }}
+{{ toYaml $.Values.deployment.labels | indent 8 }}
       {{- end }}
     spec:
-      restartPolicy: {{ .Values.deployment.restartPolicy }}
+      restartPolicy: {{ $.Values.deployment.restartPolicy }}
       containers:
-      - name: {{ .Values.name }}
+      - name: {{ $.Values.name }}
+        {{- if .args }}
+        args:
+{{ toYaml .args | indent 10 }}
+        {{- end }}
+        {{- if .command }}
+        command:
+{{ toYaml .command | indent 10 }}
+        {{- end }}
         env:
-        {{- if .Values.secrets }}
-        {{- range $key, $value := .Values.secrets }}
+        {{- if $.Values.secrets }}
+        {{- range $key, $value := $.Values.secrets }}
         - name: {{ $key }}
           valueFrom:
             secretKeyRef:
@@ -38,34 +47,34 @@ spec:
               name: {{ $.Values.name }}-config
         {{- end }}
         {{- end }}
-        image: {{ .Values.deployment.image.name }}:{{ .Values.deployment.image.tag }}
+        image: {{ $.Values.deployment.image.name }}:{{ $.Values.deployment.image.tag }}
         imagePullPolicy: IfNotPresent
-        {{- if .Values.deployment.livenessProbe }}
+        {{- if $.Values.deployment.livenessProbe }}
         livenessProbe:
-{{ toYaml .Values.deployment.livenessProbe | indent 10 }}
+{{ toYaml $.Values.deployment.livenessProbe | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.readinessProbe }}
+        {{- if $.Values.deployment.readinessProbe }}
         readinessProbe:
-{{ toYaml .Values.deployment.readinessProbe | indent 10 }}
+{{ toYaml $.Values.deployment.readinessProbe | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.ports }}
+        {{- if $.Values.deployment.ports }}
         ports:
-{{ toYaml .Values.deployment.ports | indent 8 }}
+{{ toYaml $.Values.deployment.ports | indent 8 }}
         {{- end }}
-        {{- if .Values.deployment.resources }}
+        {{- if .resources }}
         resources:
-{{toYaml .Values.deployment.resources | indent 10 }}
+{{toYaml .resources | indent 10 }}
         {{- end }}
-        {{- if .Values.deployment.volumeMounts }}
+        {{- if $.Values.deployment.volumeMounts }}
         volumeMounts:
-{{ toYaml .Values.deployment.volumeMounts | indent 8 }}
+{{ toYaml $.Values.deployment.volumeMounts | indent 8 }}
         {{- end }}
-        {{- if .Values.deployment.volumes }}
+        {{- if $.Values.deployment.volumes }}
       volumes:
-{{ toYaml .Values.deployment.volumes | indent 6}}
+{{ toYaml $.Values.deployment.volumes | indent 6}}
       {{- end }}
-  {{- if .Values.deployment.updateStrategy }}
+  {{- if $.Values.deployment.updateStrategy }}
   updateStrategy:
-{{ toYaml .Values.deployment.updateStrategy | indent 4}}
+{{ toYaml $.Values.deployment.updateStrategy | indent 4}}
   {{- end }}
 {{ end }}
