@@ -1,5 +1,5 @@
 
-{{- range $deploy_name := $.Values.deployment.deployments }}
+{{- range .Values.deployment.deployments }}
 apiVersion: extensions/v1beta1
 kind: {{ $.Values.deployment.kind }}
 metadata:
@@ -21,8 +21,10 @@ spec:
       annotations:
 {{ toYaml $.Values.deployment.podAnnotations | indent 8}}
       {{- end }}
-      {{- if $.Values.deployment.labels }}
+
       labels:
+        app: {{ $.Chart.Name}}
+      {{- if $.Values.deployment.labels }}
 {{ toYaml $.Values.deployment.labels | indent 8 }}
       {{- end }}
     spec:
