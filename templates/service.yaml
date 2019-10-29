@@ -9,9 +9,11 @@ metadata:
   name: {{ .Values.name }}-service
   namespace: {{ .Values.namespace }}
   labels:
-    app: {{ .Chart.Name }}
     {{- if .Values.service.labels }}
 {{ toYaml .Values.service.labels | indent 4 }}
+    {{- else }}
+    app: {{ .Chart.Name }}
+    {{- end }}
 spec:
   {{- if .Values.service.ports }}
   ports:
@@ -20,7 +22,7 @@ spec:
   selector:
     {{- if .Values.service.selector}}
 {{toYaml .Values.service.selector | indent 4 }}
-    {{- else .Values.service.selector }}
+    {{- else }}
     app: {{ .Chart.Name }}
   {{- end }}
   sessionAffinity: None
