@@ -6,7 +6,7 @@ apiVersion: extensions/v1beta1
 kind: {{ $.Values.deployment.kind }}
 metadata:
   labels:
-    app: {{ $.Chart.Name }}
+    app: {{ $.Values.name }}
     chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
     heritage: Tiller
     release: {{ $.Chart.Name }}
@@ -17,7 +17,12 @@ metadata:
   name: {{ $name }}
   namespace: {{ $.Values.namespace }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ $.Values.name }}
   template:
+    imagePullSecrets:
+    - name: private-registry
     metadata:
       {{- if $.Values.deployment.podAnnotations }}
       annotations:
@@ -25,7 +30,7 @@ spec:
       {{- end }}
 
       labels:
-        app: {{ $.Chart.Name}}
+        app: {{ $.Values.name }}
       {{- if $.Values.deployment.labels }}
 {{ toYaml $.Values.deployment.labels | indent 8 }}
       {{- end }}

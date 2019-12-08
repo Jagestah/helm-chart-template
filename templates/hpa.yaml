@@ -1,17 +1,15 @@
-{{- range .Values.deployment.deployments -}}
-{{- $name := .name -}}
-{{- $hpa := .hpa -}}
-{{- if $hpa -}}
+{{ range $.Values.deployment.deployments }}
+{{- if .hpa -}}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ $name }}
+  name: {{ .name }}
   namespace: {{ $.Values.namespace}}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ $name }}
+    name: {{ $.Values.deployment.name }}
   minReplicas: {{ .hpa.minReplicas }}
   maxReplicas: {{ .hpa.maxReplicas }}
   metrics:

@@ -12,7 +12,7 @@ metadata:
     {{- if .Values.service.labels }}
 {{ toYaml .Values.service.labels | indent 4 }}
     {{- else }}
-    app: {{ .Chart.Name }}
+    app: {{ .Values.name }}
     {{- end }}
 spec:
   {{- if .Values.service.ports }}
